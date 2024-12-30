@@ -96,10 +96,10 @@ alias ls='ls --color'
 alias vim='nvim'
 alias c='clear'
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # Shell integrations
 eval "$(fzf --zsh)"
 source <(fzf --zsh)
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export PATH=$PATH:/usr/local/go/bin
