@@ -1,10 +1,13 @@
 local plugins = {
+  -- Nvim NeoTest IO
+  {
+    "nvim-neotest/nvim-nio",
+  },
   -- DAP UI
   {
     "rcarriga/nvim-dap-ui",
     event = "VeryLazy",
-    dependencies = { "mfussenegger/nvim-dap",
-       "nvim-neotest/nvim-nio"},
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     config = function()
       local dap = require("dap")
       local dapui = require("dapui")
@@ -20,26 +23,29 @@ local plugins = {
       end
     end,
   },
-  -- Mason DAP
-  {
-    "jay-babu/mason-nvim-dap.nvim",
-    event = "VeryLazy",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "mfussenegger/nvim-dap",
-    },
-    opts = {
-      handlers = {},
-    },
-  },
   -- Core DAP
   {
     "mfussenegger/nvim-dap",
-    config = function(_, _)
+    config = function(_, opts)
       require("core.utils").load_mappings("dap")
     end,
     init = function()
       require("core.utils").load_mappings("dap")
+    end,
+  },
+  -- DAP Python
+  {
+    "mfussenegger/nvim-dap-python",
+    ft = "python",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "rcarriga/nvim-dap-ui",
+      "nvim-neotest/nvim-nio",
+    },
+    config = function(_, opts)
+      local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
+      require("dap-python").setup(path)
+      require("core.utils").load_mappings("dap_python")
     end,
   },
   -- DAP Go
@@ -52,14 +58,22 @@ local plugins = {
       require("core.utils").load_mappings("dap_go")
     end,
   },
-  -- Null LS
+  -- Null LS for Python
   {
     "jose-elias-alvarez/null-ls.nvim",
     event = "VeryLazy",
     opts = function()
       return require "custom.configs.null-ls"
     end,
-    ft = { "go" }, -- Ensures it only loads for Go files where applicable
+    ft = { "go", "python" }, -- Ensures it only loads for Go and Python files
+  },
+  -- None LS for Python
+  {
+    "nvimtools/none-ls.nvim",
+    ft = {"python"},
+    opts = function()
+      return require "custom.configs.null-ls"
+    end,
   },
   -- LSP Config
   {
@@ -78,10 +92,15 @@ local plugins = {
         "clang-format",
         "codelldb",
         "gopls",
+        "black",
+        "debugpy",
+        "mypy",
+        "ruff-lsp",
+        "pyright",
       },
     },
   },
-  -- Gopher
+  -- Gopher (Go)
   {
     "olexsmir/gopher.nvim",
     ft = "go",
