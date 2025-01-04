@@ -32,7 +32,7 @@ lspconfig.gopls.setup {
 
 local servers = {
   "pyright",
-  "ruff_lsp",
+  "ruff",
 }
 
 for _, lsp in ipairs(servers) do
@@ -43,3 +43,10 @@ for _, lsp in ipairs(servers) do
   })
 end
 
+lspconfig.bashls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  cmd = { "bash-language-server", "start" }, -- Explicit command for bashls
+  filetypes = { "sh", "bash" },             -- Supported filetypes
+  root_dir = util.find_git_ancestor or util.path.dirname, -- Root detection logic
+}
